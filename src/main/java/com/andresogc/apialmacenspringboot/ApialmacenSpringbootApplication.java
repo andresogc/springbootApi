@@ -20,8 +20,6 @@ public class ApialmacenSpringbootApplication implements CommandLineRunner {
     @Autowired
     private ProductRepository productRepository;
 
-
-
     public static void main(String[] args) {
         SpringApplication.run(ApialmacenSpringbootApplication.class, args);
     }
@@ -40,8 +38,6 @@ public class ApialmacenSpringbootApplication implements CommandLineRunner {
         user.setLastName("Melo");
         user.setAddress("carrera 11# 14-08");
         userRepository.save( user );
-
-        System.out.println(user);
     }
 
     //insetar productos
