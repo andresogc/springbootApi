@@ -17,5 +17,8 @@ public class CustomerOrderService implements ICustomerOrder {
         return customerOrderRepository.save(customerOrder);
     }
 
+    @Override
+    public CustomerOrder updateOrder(CustomerOrder customerOrder) { return customerOrderRepository.save(customerOrder); }
+
 
 }

@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 @Data
@@ -19,10 +18,8 @@ public class Product {
     private String name;
     private String description;
     private Double price;
-    @ManyToMany (mappedBy = ("products"))
-    private List<CustomerOrder> customerOrders = new ArrayList<>();
     @Transient
-    private Integer cantidad;
+    private Integer amount;
 
 
 }

@@ -1,5 +1,6 @@
 package com.andresogc.apialmacenspringboot.model;
 
+
 import lombok.Data;
 
 import javax.persistence.*;
@@ -21,7 +22,7 @@ public class CustomerOrder {
     private Date created_at= new Date();
     @ManyToMany
     @JoinTable(
-            name="product_detail",
+            name= "ProductDetail",
             joinColumns = @JoinColumn(name = "custormerOrder_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )

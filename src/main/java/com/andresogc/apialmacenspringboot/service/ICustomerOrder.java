@@ -9,6 +9,8 @@ import java.util.Optional;
 public interface ICustomerOrder {
 
     CustomerOrder saveOrder(CustomerOrder customerOrder);
+    CustomerOrder updateOrder(CustomerOrder customerOrder);
+
 
 
 }
