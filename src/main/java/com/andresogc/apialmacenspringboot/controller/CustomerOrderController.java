@@ -6,6 +6,8 @@ import com.andresogc.apialmacenspringboot.model.User;
 import com.andresogc.apialmacenspringboot.repository.ProductRepository;
 import com.andresogc.apialmacenspringboot.repository.UserRepository;
 import com.andresogc.apialmacenspringboot.service.ICustomerOrder;
+import com.andresogc.apialmacenspringboot.service.IProduct;
+import com.andresogc.apialmacenspringboot.service.IUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +24,9 @@ public class CustomerOrderController {
     @Autowired
     private ICustomerOrder customerOrderService;
     @Autowired
-    private ProductRepository productRepository;
-
+    private IProduct productService;
     @Autowired
-    private UserRepository userRepository;
+    private IUser userService;
 
     @PostMapping("/save")
     public List<Object> saveOrder(@RequestBody CustomerOrder customerOrder) throws Exception {
@@ -85,28 +86,25 @@ public class CustomerOrderController {
 
     @PutMapping("/update")
     public List<Object> updateOrder(@RequestBody CustomerOrder customerOrder){
-
-
-
-
         //Obtener del request la lista de productos comprados por el cliente
         List<Product> products = customerOrder.getProducts();
-
-
-
         //variables para guardar los calculos del IVA y el valor total de la compra
         double subTotal;
         double totalIVA;
         double totalToPay;
         double shippingValue=3000;
+        Integer timeLimit = 5;
         List<Object> response = new LinkedList<>();
         try{
+            Integer orderId =  customerOrder.getId();
+            //validar que el pedido en DB este en estado 1 osea abierto para poder editarlo, si esta en estado 2 es porque esta cancelado
+            CustomerOrder orderDB = customerOrderService.getOrder(orderId);
+            if(orderDB.getState() == 2){throw new Exception("No se puede editar este pedido porque ha sido cancelado previamente");}
             //validar si se puede modificar el pedido dependiendo de las horas que hallan transcurrido desde la creacion del pedido
-            calculateTimeDiff(customerOrder);
-
+            Integer horas = calculateTimeDiff(orderId,timeLimit);
+            if(horas > timeLimit ){throw new Exception("Solo se puede eliminar el pedido si han trasncurrido menos de 5 horas desde su creación");}
             //Validar si usuario que viene en el request, quien es el que realiza la compra, existe en la base de datos
             Boolean userExist = getUser(customerOrder);
-
             if(userExist){
 
                 //calcular el subtotal (sin el IVA)
@@ -147,20 +145,43 @@ public class CustomerOrderController {
     }
 
 
-    @DeleteMapping("/delete")
-    public CustomerOrder deleteOrder(){
-        return null;
+    @DeleteMapping("/delete/{id}")
+    public List<Object> deleteOrder(@PathVariable("id") int orderId) throws Exception {
+        List<Object> response = new LinkedList<>();
+        Integer timeLimit = 12;
+        String mensaje="El Pedido ha sido eliminado exitosamente";
+        CustomerOrder customerOrder = customerOrderService.getOrder(orderId);
+
+        try{
+            Integer horas = calculateTimeDiff(orderId,timeLimit);
+            if(customerOrder.getState() == 2){throw new Exception("No se puede eliminar el pedido porque ha sido cancelado previamente");}
+            if(horas > timeLimit ){
+
+                Double totalToPay = customerOrder.getTotalToPay() * 0.10;
+                mensaje = "El pedido por valor de $"+customerOrder.getTotalToPay()+" se ha eliminado, sin embargo se hará un cobro del 10%, ya que han pasado mas de 12 horas desde que se solicito el pedido. El monto a cancelar es de: $" + Math.round(totalToPay*100.0)/100.0;
+                customerOrder.setState(2);
+                customerOrder.setTotalToPay(totalToPay);
+                customerOrderService.updateOrder(customerOrder);
+                response.add(mensaje);
+                return response;
+            }else {
+                customerOrderService.deleteOrder(orderId);
+                response.add(mensaje);
+                return response;
+            }
+        }catch (Exception e){
+            response.add(e.getMessage());
+            return response;
+        }
+
     }
 
     //Conseguir el usuario que realizo la compra
     private Boolean getUser(CustomerOrder customerOrder) throws Exception {
-
+        List<Object> response = new LinkedList<>();
         User userRequest = customerOrder.getUser();
-
-        Optional<User> user =  userRepository.findById(userRequest.getId());
-
-        if (!user.isPresent()){
-            throw new Exception("El usuario debe iniciar sesion o registrase para poder continuar con la compra");
+        if(!userService.getUser(userRequest.getId())){
+            throw new Exception("El usuario debe iniciar sesion o registrase para poder continuar");
         }else{
             return true;
         }
@@ -173,8 +194,7 @@ public class CustomerOrderController {
         for (Product p: products) {
             Integer id = p.getId();
             //obtener el precio del producto de la base de datos y calcular el monto segun la cantidad
-            Optional<Product> optional = productRepository.findById(id);
-            Product product = optional.get();
+            Product product = productService.getProduct(id);
             subTotal += product.getPrice() * p.getAmount();
         }
 
@@ -188,10 +208,10 @@ public class CustomerOrderController {
     }
 
     //Obtener diferencia de horas entre dos fechas
-    private Integer calculateTimeDiff(CustomerOrder customerOrder) throws Exception {
-        Integer order_id =  customerOrder.getId();
+    private Integer calculateTimeDiff(Integer orderId,Integer timeLimit)  {
+
         Date currentDate = new Date();
-        Date orderCreated = customerOrderService.getOrderDate(order_id);
+        Date orderCreated = customerOrderService.getOrderDate(orderId);
 
         int diferencia=(int) ((currentDate.getTime() - orderCreated.getTime())/1000);
         int horas=0;
@@ -201,7 +221,7 @@ public class CustomerOrderController {
             diferencia=diferencia-(horas*3600);
         }
 
-        if(horas < 5 ){throw new Exception("Solo se puede editar el pedido si han trasncurrido menos de 5 horas desde su creación");}
+
 
         return horas;
     }

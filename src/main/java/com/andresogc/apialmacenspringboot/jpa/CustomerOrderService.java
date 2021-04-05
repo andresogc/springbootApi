@@ -31,5 +31,17 @@ public class CustomerOrderService implements ICustomerOrder {
         return order.getCreated_at();
     }
 
+    @Override
+    public void deleteOrder(Integer id) {
+        customerOrderRepository.deleteById(id);
+    }
+
+    @Override
+    public CustomerOrder getOrder(Integer orderId) {
+        Optional<CustomerOrder> optional = customerOrderRepository.findById(orderId);
+        CustomerOrder order = optional.get();
+        return order;
+    }
+
 
 }
