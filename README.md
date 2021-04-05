@@ -8,6 +8,15 @@ Api de  almacén para realizar pagos en linea con Spring Boot.
 - Editar el pedido si fue creado antes de 5 horas
 - Eliminar pedido si fue creado antes de 12 horas, si psaron mas de 12 horas no se elimna el pedido pero si se cancela y al cliente se le factura el %10.
 
+# Condiciones
+
+- Pedido superiores a $100.000.00 no tiene cobro de envio
+- Pedido inferior a $100.000.00  tiene cobro de envio
+- Los pedidos deben ser mayor a $70.000.00
+- Pedidos con mas de 5 horas de creados no se pueden editar
+- Pedidos con mas de 12 horas de creados no se pueden eliminar, seran cancelados y se cobrara un %10 del pedido al cliente.
+- Pedidos con menos de 5 horas de creados se pueden eliminar
+
 #Estados que puede tener el pedido:
 - 1 : Abierto
 - 2 : Cancelado
