@@ -6,6 +6,8 @@ import com.andresogc.apialmacenspringboot.service.IProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,5 +21,10 @@ public class ProductService implements IProduct {
         Optional<Product> optional = productRepository.findById(productId);
         Product product = optional.get();
         return product;
+    }
+
+    @Override
+    public void saveAllProducts(List<Product> productos) {
+        productRepository.saveAll(productos);
     }
 }

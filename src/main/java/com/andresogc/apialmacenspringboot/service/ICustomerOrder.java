@@ -1,11 +1,13 @@
 package com.andresogc.apialmacenspringboot.service;
 
 import com.andresogc.apialmacenspringboot.model.CustomerOrder;
+import com.andresogc.apialmacenspringboot.model.Product;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Date;
+import java.util.List;
 
 public interface ICustomerOrder {
 
@@ -14,6 +16,7 @@ public interface ICustomerOrder {
     Date getOrderDate(Integer orderId);
     void deleteOrder(Integer orderId);
     CustomerOrder getOrder(Integer orderId);
+    void saveAllOrders(List<CustomerOrder> orders);
 
 
 

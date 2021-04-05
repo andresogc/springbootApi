@@ -43,5 +43,10 @@ public class CustomerOrderService implements ICustomerOrder {
         return order;
     }
 
+    @Override
+    public void saveAllOrders(List<CustomerOrder> orders) {
+        customerOrderRepository.saveAll(orders);
+    }
+
 
 }

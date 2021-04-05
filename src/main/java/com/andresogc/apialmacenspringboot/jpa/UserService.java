@@ -23,4 +23,9 @@ public class UserService implements IUser {
             return true;
         }
     }
+
+    @Override
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
 }

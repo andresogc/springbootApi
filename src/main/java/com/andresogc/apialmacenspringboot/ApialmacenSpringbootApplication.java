@@ -1,9 +1,13 @@
 package com.andresogc.apialmacenspringboot;
 
+import com.andresogc.apialmacenspringboot.model.CustomerOrder;
 import com.andresogc.apialmacenspringboot.model.Product;
 import com.andresogc.apialmacenspringboot.model.User;
 import com.andresogc.apialmacenspringboot.repository.ProductRepository;
 import com.andresogc.apialmacenspringboot.repository.UserRepository;
+import com.andresogc.apialmacenspringboot.service.ICustomerOrder;
+import com.andresogc.apialmacenspringboot.service.IProduct;
+import com.andresogc.apialmacenspringboot.service.IUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -16,9 +20,9 @@ import java.util.List;
 public class ApialmacenSpringbootApplication implements CommandLineRunner {
 
     @Autowired
-    private UserRepository userRepository;
+    private IUser userService;
     @Autowired
-    private ProductRepository productRepository;
+    private IProduct productService;
 
     public static void main(String[] args) {
         SpringApplication.run(ApialmacenSpringbootApplication.class, args);
@@ -37,18 +41,19 @@ public class ApialmacenSpringbootApplication implements CommandLineRunner {
         user.setName("Pepito");
         user.setLastName("Melo");
         user.setAddress("carrera 11# 14-08");
-        userRepository.save( user );
+        userService.saveUser(user);
     }
 
-    //insetar productos
+    //insertar productos
     private void saveAllProducts(){
         List<Product> productos = getListProducts();
-        productRepository.saveAll(productos);
+        productService.saveAllProducts(productos);
     }
+
 
     //Crear lista de productos
     private List<Product> getListProducts(){
-        List<Product> productsList = new LinkedList<Product>();
+        List<Product> productsList = new LinkedList<>();
 
         Product product1 = new Product();
         product1.setName("Audifonos");
@@ -83,4 +88,6 @@ public class ApialmacenSpringbootApplication implements CommandLineRunner {
 
         return productsList;
     }
+
+
 }
