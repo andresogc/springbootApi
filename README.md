@@ -246,7 +246,7 @@ Y como ejemplo de respuesta tenemos:
 - Si han pasado mas de 12 horas y el usuario cancela un pedido:
 
 [
-    "El pedido por valor de $369852.0 se ha eliminado, sin embargo se hará un cobro del 10%, ya que han pasado mas de 12 horas desde que se solicito el pedido. El monto a cancelar es de: $36985.2"
+    "El pedido por valor de $369852.0 se ha cancelado, sin embargo se hará un cobro del 10%, ya que han pasado mas de 12 horas desde que se solicito el pedido. El monto a cancelar es de: $36985.2"
 ]
 
 
