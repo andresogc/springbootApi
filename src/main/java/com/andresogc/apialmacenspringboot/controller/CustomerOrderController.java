@@ -102,7 +102,7 @@ public class CustomerOrderController {
             if(orderDB.getState() == 2){throw new Exception("No se puede editar este pedido porque ha sido cancelado previamente");}
             //validar si se puede modificar el pedido dependiendo de las horas que hallan transcurrido desde la creacion del pedido
             Integer horas = calculateTimeDiff(orderId,timeLimit);
-            if(horas > timeLimit ){throw new Exception("Solo se puede eliminar el pedido si han trasncurrido menos de 5 horas desde su creación");}
+            if(horas > timeLimit ){throw new Exception("Solo se puede editar el pedido si han trasncurrido menos de 5 horas desde su creación");}
             //Validar si usuario que viene en el request, quien es el que realiza la compra, existe en la base de datos
             Boolean userExist = getUser(customerOrder);
             if(userExist){
@@ -158,7 +158,7 @@ public class CustomerOrderController {
             if(horas > timeLimit ){
 
                 Double totalToPay = customerOrder.getTotalToPay() * 0.10;
-                mensaje = "El pedido por valor de $"+customerOrder.getTotalToPay()+" se ha eliminado, sin embargo se hará un cobro del 10%, ya que han pasado mas de 12 horas desde que se solicito el pedido. El monto a cancelar es de: $" + Math.round(totalToPay*100.0)/100.0;
+                mensaje = "El pedido por valor de $"+customerOrder.getTotalToPay()+" se ha cancelado, sin embargo se hará un cobro del 10%, ya que han pasado mas de 12 horas desde que se solicito el pedido. El monto a cancelar es de: $" + Math.round(totalToPay*100.0)/100.0;
                 customerOrder.setState(2);
                 customerOrder.setTotalToPay(totalToPay);
                 customerOrderService.updateOrder(customerOrder);
