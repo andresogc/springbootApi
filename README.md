@@ -12,6 +12,11 @@ Api de  almacén para realizar pagos en linea con Spring Boot.
 - 1 : Abierto
 - 2 : Cancelado
 
+# Para ver la consola de H2, ingresar a la url:
+
+- http://localhost:8080/console
+
+
 # Endpoint de solicitud para crear pedido: 
 
 - http://localhost:8080/api/order/save
@@ -256,8 +261,6 @@ Y como ejemplo de respuesta tenemos:
 [
     "No se puede eliminar el pedido porque ha sido cancelado previamente"
 ]
-
-
 
 
 
